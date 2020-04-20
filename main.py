@@ -1,40 +1,44 @@
 import socket
-import os
+import threading
+import _thread
+from hooks import eprint
+import time
 
-HOST = '0.0.0.0'
-PORT = 80
-PATH = os.getcwd() + '/content'
 
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+def parse_request(data:bytes):
+    time.sleep(1)
+    eprint(data)
+
+def req_handler(conn:socket.socket):
+    while True:
+        data = conn.recv(1024)
+        if not data:
+            eprint('END')
+            break
+        
+        parse_request(data)
+
+    conn.close()
+
+def main():
+    HOST = '0.0.0.0'
+    PORT = 1234
+
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind((HOST, PORT))
-    s.listen()
-    print(f'Started listening on port {PORT}')
-    while(True):
+
+    s.listen(100)
+    eprint(f'started listening on port {PORT}')
+
+    while True:
         conn, address = s.accept()
-        with conn:
-            print('connected by', address)
-            try:
-                data = conn.recv(1024)
-            except:
-                print('error conn.recv()')
-                continue
-            if not data:
-                break
-            text = str(data, 'utf-8')
-            print(f'request is:\n {text}')
-            method = text.split(' ')[0]
-            link = text.split(' ')[1]
-            if method == 'GET':
-                if link == '/':
-                    filename = PATH + '/index.html'
-                else:
-                    filename = PATH + link.split('?')[0]
-                print(filename)
-                try:
-                    header = 'HTTP/1.0 200 OK\nContent-Type: text/html\n\n'.encode('utf-8')
-                    content = open(filename).read().encode('utf-8')
-                except FileNotFoundError:
-                    header = 'HTTP/1.0 404 Not Found\n\n'.encode('utf-8')
-                    content = open(PATH+'/errors/404.html').read().encode('utf-8')
-                texttosend = header + content
-                conn.send(texttosend)
+
+        eprint(f'connected to {address[0]} : {address[1]}')
+
+        _thread.start_new_thread(req_handler, (conn,))
+
+    s.close()
+
+if __name__ == "__main__":
+    main()
+.
