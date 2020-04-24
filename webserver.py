@@ -13,7 +13,7 @@ class webserver:
     # listen backlog: maximum number of clients at once
     # debug: logging
     # bufferSize: data receiving buffer size
-    def __init__(self, address, listen_backlog=1021, debug=True, bufferSize=1024, path='.'):
+    def __init__(self, address, listen_backlog=1021, debug=True, bufferSize=1024, path='./content'):
         # set vars
         self.debug = debug
         self.address = address
