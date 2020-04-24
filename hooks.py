@@ -1,10 +1,17 @@
 import sys
 import time
 
-def eprint(value):
-    if value is None:
+def eprint(*args, **kwargs):
+    if len(args) == 0:
         return
-    text = repr(value)
+
+    text = ''
+    for value in args:
+        if isinstance(value, str):
+            text += value + ' '
+        else:
+            text += repr(value) + ' '
+    text = text[:-1]
     sys.stdout.write('\u001b[36m')
     sys.stdout.write('* ')
     sys.stdout.write('\u001b[0m')
