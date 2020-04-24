@@ -13,12 +13,13 @@ class webserver:
     # listen backlog: maximum number of clients at once
     # debug: logging
     # bufferSize: data receiving buffer size
-    def __init__(self, address, listen_backlog=1021, debug=True, bufferSize=1024):
+    def __init__(self, address, listen_backlog=1021, debug=True, bufferSize=1024, path='.'):
         # set vars
         self.debug = debug
         self.address = address
         self.bufferSize = bufferSize
         self.listen_backlog = listen_backlog
+        self.path = path
         # define a new socket
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         if self.debug == True:
@@ -30,7 +31,7 @@ class webserver:
         if self.debug == True:
             eprint(f'started listening at ip: {address[0]}, port: {address[1]} accepting {self.listen_backlog} reqs as max')
         # define a new request handler object for later uses
-        self.handler = request_handler(self.debug)
+        self.handler = request_handler(self.debug, bufferSize=self.bufferSize, path=self.path)
 
     # staru accepting clients
     def start_receiving(self):

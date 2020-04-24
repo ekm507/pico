@@ -2,7 +2,7 @@
 from webserver import webserver
 # basic system functions
 import sys
-
+import os
 # main function
 def main():
     # this is for closing socket when errors occur
