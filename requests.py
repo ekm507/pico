@@ -40,7 +40,7 @@ class request_handler:
                     break
                 # now the request is going to get handled
 
-
+                self.http_parser(str(data, 'utf-8'))
                 self.default_answer(conn, data, name=name)
 
                 if self.debug == True:
@@ -93,7 +93,53 @@ class request_handler:
                 pass
             texttosend = header + data
             conn.send(texttosend)
+    
+    def http_parser(self, request):
 
+        lines = request.split('\n')
+        
+        for line in lines:
+            if len(line) == 0:
+                break
+            
+            words = line.split(' ')
+        
+            if words[0] == 'GET':
+                link = words[1]
+                if len(words) >= 3:
+                    http_version = words[2]
+            
+            elif words[0] == 'Host:':
+                hostname = words[1]
+            
+            elif words[0] == 'User-Agent:':
+                user_agent = words[1:]
+            
+            elif words[0] == 'Accept:':
+                accept_file_types = words[1:]
+            
+            elif words[0] == 'Accept-Language:':
+                accept_language = words[1:]
+            
+            elif words[0] == 'Accept-Encoding:':
+                accept_encoding = words[1:]
+
+            elif words[0] == 'Connection:':
+                connection_mode = words[1]
+            
+            elif words[0] == 'Cache-Control:':
+                cache_control = words[1]
+            
+            eprint(words[0])
+            eprint(words)
+        
+        eprint(link, http_version, hostname)
+        print()
+        print()
+        for s in [link, http_version, hostname, user_agent, accept_file_types, accept_language, accept_encoding, connection_mode, cache_control]:
+            eprint(s)
+        print()
+        print()
     # nothing yet.
     def __del__(self):
         pass
