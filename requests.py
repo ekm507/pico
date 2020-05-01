@@ -40,7 +40,6 @@ class request_handler:
                     break
                 # now the request is going to get handled
 
-                self.http_parser(str(data, 'utf-8'))
                 self.default_answer(conn, data, name=name)
 
                 if self.debug == True:
