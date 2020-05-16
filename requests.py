@@ -53,6 +53,7 @@ class request_handler:
 
     def default_answer(self, conn, data, name=''):
         text = str(data, 'utf-8')
+        self.http_parser(text)
         method = text.split(' ')[0]
         link = text.split(' ')[1]
         name = link.split('?')[0]
@@ -93,52 +94,38 @@ class request_handler:
             texttosend = header + data
             conn.send(texttosend)
     
+    # parse http request
     def http_parser(self, request):
 
-        lines = request.split('\n')
+        # TODO: add method to dictionary.
         
+        # split request into lines
+        lines = request.split('\n')
+
+        # dictionary to store requests in
+        request_dic = {}
+        
+        # start parsing lines
         for line in lines:
+            # parse header only. and not message body
             if len(line) == 0:
                 break
             
+            # split line into words by space character
             words = line.split(' ')
-        
-            if words[0] == 'GET':
-                link = words[1]
-                if len(words) >= 3:
-                    http_version = words[2]
-            
-            elif words[0] == 'Host:':
-                hostname = words[1]
-            
-            elif words[0] == 'User-Agent:':
-                user_agent = words[1:]
-            
-            elif words[0] == 'Accept:':
-                accept_file_types = words[1:]
-            
-            elif words[0] == 'Accept-Language:':
-                accept_language = words[1:]
-            
-            elif words[0] == 'Accept-Encoding:':
-                accept_encoding = words[1:]
 
-            elif words[0] == 'Connection:':
-                connection_mode = words[1]
+            # if a line is not only one word,
+            if len(words) > 1:
+                # then add it to dictionary.
+                request_dic[words[0]] = words[1:]
+                # this will do like this:
+                # let line is like : word0 word1 word2 ...
+                # so dictionary element will be like this:
+                # word0 : [word1 word2 ...]
+
             
-            elif words[0] == 'Cache-Control:':
-                cache_control = words[1]
-            
-            eprint(words[0])
-            eprint(words)
-        
-        eprint(link, http_version, hostname)
-        print()
-        print()
-        for s in [link, http_version, hostname, user_agent, accept_file_types, accept_language, accept_encoding, connection_mode, cache_control]:
-            eprint(s)
-        print()
-        print()
+        eprint(request_dic)
+    
     # nothing yet.
     def __del__(self):
         pass
