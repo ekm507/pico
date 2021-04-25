@@ -3,6 +3,7 @@ from hooks import eprint
 import subprocess
 import time
 import socket
+import os
 
 # a class for handling webserver requests
 class request_handler:
@@ -76,8 +77,14 @@ class request_handler:
                     filename = self.path + '/index.html'
                     status = 200
                 else:
-                    filename = self.path + link.split('?')[0]
-                    status = 200
+                    givenPath = link.split('?')[0]
+                    realGivenPath = os.path.realpath(givenPath)
+                    if realGivenPath.startswith(self.path):
+                        filename = self.path + link.split('?')[0]
+                        status = 200
+                    else:
+                        filename = ''
+                        status = 404
                 try:
                     data = open(filename, 'rb').read()
                     status = 200
